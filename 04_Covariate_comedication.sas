@@ -521,17 +521,6 @@ data min.bs_user_comedication_v05;
 run;
 
 
-/* calculate prevalence */
-proc freq data=min.bs_user_comedication_v05;
-	table cm_insul;
-run;
-
-/*
-among 
-cm_insul = 1 | 7761 (20.62%)
-cm_insul = 0 | 
-*/
-
 * 1.7. Antidepressants users;
 /**************************************************
 * new table: min.antidepressant_users_v00
@@ -615,17 +604,6 @@ data min.bs_user_comedication_v06;
 run;
 
 
-/* calculate prevalence */
-proc freq data=min.bs_user_comedication_v06;
-	table cm_depres;
-run;
-
-/*
-among  
-cm_depres = 1 | 10424 (27.69%)
-cm_depres = 0 | 
-*/
-
 * 1.8. Antipsychotics  users;
 /**************************************************
 * new table: min.antipsychotics_users_v00
@@ -707,18 +685,6 @@ data min.bs_user_comedication_v07;
 	set min.bs_user_comedication_v07;
  	if missing(cm_psycho) then cm_psycho = 0;
 run;
-
-
-/* calculate prevalence */
-proc freq data=min.bs_user_comedication_v07;
-	table cm_psycho;
-run;
-
-/*
-among  
-cm_psycho = 1 | 8758 (23.27 %)
-cm_psycho = 0 | 
-*/
 
 * 1.9. Anticonvulsants  users;
 /**************************************************
@@ -802,17 +768,6 @@ data min.bs_user_comedication_v08;
  	if missing(cm_convul) then cm_convul = 0;
 run;
 
-
-/* calculate prevalence */
-proc freq data=min.bs_user_comedication_v08;
-	table cm_convul;
-run;
-
-/*
-among 
-cm_convul = 1 | 14168 (37.64%)
-cm_convul = 0 | 
-*/
 
 * 1.10. anti-obesity medication users;
 /**************************************************
@@ -905,15 +860,3 @@ data min.bs_user_comedication_v09;
 	set min.bs_user_comedication_v09;
  	if missing(cm_ob) then cm_ob = 0;
 run;
-
-
-/* calculate prevalence */
-proc freq data=min.bs_user_comedication_v09;
-	table cm_ob;
-run;
-
-/*
-among 
-cm_ob = 1 | 2115 (5.62 %)
-cm_ob = 0 | 
-*/
