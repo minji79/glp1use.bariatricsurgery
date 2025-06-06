@@ -405,14 +405,14 @@ run;       /* obs */
 **************************************************/
 
 proc sort data=min.thiazo_users_v02;
-	by patient_id cm_su_date;
+	by patient_id cm_thiaz_date;
 run;
 
 data min.thiazo_users_v03;
 	set min.thiazo_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 367 obs */
+run;      /* 338 obs */
 
 /* merge with the total 38384 dataset */
 /**************************************************
