@@ -32,7 +32,7 @@ sas -helpbrowser SAS -xrm "SAS.webBrowser:'/usr/bin/chromium-browser'" -xrm "SAS
 * My own directory for sharing in team folder:           /dcs07/trinetx/data/Users/MJ;
 
 * to use original-data and 5p-data from the teamfolder;
-libname tx "/dcs07/trinetx/data/may2025datasets/csv";
+libname tx "/dcs07/trinetx/data/may2025datasets/sas";
 
 * to locate my own data analysis output under users in teamfolder;
 libname min "/dcs07/trinetx/data/Users/MJ";
