@@ -76,13 +76,13 @@ run;              /* 173145 obs */
 data min.bs_user_rygb_v01;  /* distinct patient-date */
 	set min.bs_user_rygb (keep = patient_id date bs_type);
 run;               
-proc sort data = min.bs_user_rygb_v01 nodupkey out =min.bs_user_rygb_v01;
+proc sort data = min.bs_user_rygb_v01 nodupkey out =min.bs_user_rygb_v02;
 	by _all_;
 run;                /* 87831 obs - it includes all of dates for individuals who have more than one date */              
 
 proc SQL;
 	select count(distinct patient_id) as distinct_patient_count
- 	from min.bs_user_rygb_v01;
+ 	from min.bs_user_rygb_v02;
   	title "the number of distinct RYGB users";
 quit;   /* 86090 obs - it includes only distinct RYGB users list */
 
@@ -107,10 +107,28 @@ run;                /* 124080 obs - it includes all of dates for individuals who
                
 
 proc SQL;
-	select count(distinct patient_id) as distinct_patient_count
+	select count(distinct patient_id) as distinct_patient_count,
+ 	count(patient_id) as total_patient_count
  	from min.bs_user_sg_v02;
 quit;         /* 121037 obs - it includes only distinct SG users list */
 
+proc SQL;
+	select count(distinct patient_id) as distinct_patient_count,
+ 	count(patient_id) as total_patient_count
+ 	from min.bs_user_rygb_v01;
+quit;   
+
+/* test */
+proc SQL;
+	select count(distinct patient_id) as distinct_patient_count
+ 	from tx.procedure;
+quit;  
+
+proc SQL;
+	select count(patient_id) as total_patient_count, 
+ 	count(distinct patient_id) as distinct_patient_count
+ 	from tx.procedure;
+quit;  
 
 * 1.3. Merge all datasets of each type of BS to have all BS users file;
 
@@ -126,13 +144,15 @@ data min.bs_user_all_v00;
 run;                          
 proc sort data=min.bs_user_all_v00;
 	by patient_id date;
-run;                    /* 157345 obs */
+run;                    /* 211911 obs */
+
 
 /* to count distinct number of BS users */
 proc SQL;
-	select count(distinct patient_id) as distinct_patient_count
+	select count(distinct patient_id) as distinct_patient_count,
+ 	count(patient_id) as total_patient_count
  	from min.bs_user_all_v00;
-quit;   /* 153339 obs */
+quit;        /* 199661 obs */
 
 
 * 1.4. make variable "bs_count" indicating the number of BS by patient;
@@ -149,7 +169,8 @@ data min.bs_user_all_v01;
 	set min.bs_user_all_v00;
 	by patient_id;
 	if first.patient_id;
-run;           /* 153339 obs */
+run;           /* 199661 obs */
+
 
 * 1.6. count how many individuals have multiple BS procedures;
 proc freq data=min.bs_user_all_v01;
@@ -211,15 +232,11 @@ run;   /* 110274 obs */
 
 * 2.2. frequency distribution of users by BS type and count;
 
-proc freq data=min.bs_user_all_v02;
+proc freq data=min.bs_user_all_v03;
 	table bs_type;
  	title "frequency distribution of bs_type";
 run;
 
-proc freq data=min.bs_user_all_v02;
-	table bs_count;
- 	title "frequency distribution of bs_count";
-run;
 
 /************************************************************************************
 	STEP 3. Merge "BS users between 01JAN2015 - 31MAY2023" + "demographic data"       N = 110,274 -> 96,372
@@ -251,15 +268,59 @@ proc sql;
   from min.bs_user_all_v02 as a
   join tx.patient as b
   on a.patient_id = b.patient_id;
-quit;   /* 96,372 obs */
+quit;   /* 130,744 obs */
 
-proc print data=min.bs_user_all_v03 (obs=40); 
-  title "min.bs_user_all_v03"; 
-run;
-  
+proc freq data=min.bs_user_all_v03; table bs_type; run;
+
+
+/* dropped individuals - patient_id */
+/*
+number of distinct patients
+tx.procedure : 3,646,163
+tx.patient : 3,872,624
+(-) 226,461
+*/
+/*
+proc sql;
+  create table procedure_ids as
+  select distinct patient_id
+  from tx.procedure;
+quit;
+
+proc sql;
+  create table notfound_ids as
+  select a.*
+  from procedure_ids as a
+  left join tx.patient as b
+  on a.patient_id = b.patient_id
+  where b.patient_id is missing;
+quit;
+
+proc sql;
+  create table notfound_ids as
+  select a.*
+  from procedure_ids as a
+  inner join tx.patient as b
+  on a.patient_id = b.patient_id;
+quit;
+
+
+
+proc sql;
+  create table dropped_ids as
+  select a.*
+  from min.bs_user_all_v02 as a
+  left join tx.patient as b
+  on a.patient_id = b.patient_id
+  where b.patient_id is missing;
+quit;
+
+proc print data=dropped_ids (obs=20); run;
+*/
+
 
 /************************************************************************************
-	STEP 4. Age >= 18         N = 1909
+	STEP 4. Age >= 18         N = 1894 (= 130744 - 128850 )
 ************************************************************************************/
 
 /**************************************************
@@ -276,7 +337,7 @@ data min.bs_user_all_v04;
     format year_of_birth_num 6.;
     drop year_of_birth;
   rename year_of_birth_num = year_of_birth;
-run;
+run; 
 
 * 4.2. to convert 'year_of_birth' to 'age', change the format of the 'year_of_birth';
 data min.bs_user_all_v04;
@@ -288,7 +349,7 @@ run;
 data min.bs_user_all_v05;
   set min.bs_user_all_v04;
   if age_at_bs >=18;
-run;      /* 94463 obs */
+run;      /* 128850 obs */
 
 
 /************************************************************************************
@@ -305,7 +366,7 @@ proc freq data = min.bs_user_all_v05; table sex; run;                   /* nmiss
 data min.bs_user_all_v06;	
 	set min.bs_user_all_v05;
 	if not missing (sex);
-run;                   /* 94463 obs */
+run;                   /* 128850 obs */
 
 
 /************************************************************************************
@@ -321,12 +382,12 @@ run;                   /* 94463 obs */
 * postal_code: Diamond network : patient_regional_location;
 proc freq data = min.bs_user_all_v06;
 	table patient_regional_location;
-run;               /* Ex-US = 990, Unknown = 3953 -> total = 4943 */ 
+run;               /* Ex-US = 957, Unknown = 4338 -> total = 5295 */ 
 
 data min.bs_user_all_v07;	
 	set min.bs_user_all_v06;
 	if patient_regional_location in('Midwest', 'Northeast', 'South', 'West');
-run;        /* 89520 obs */
+run;        /* 123,555 obs */
 
 
 /************************************************************************************
@@ -351,7 +412,7 @@ run;
 data min.bs_user_all_v08;
     set min.bs_user_all_v08;
     if not missing(death_date) and death_date < bs_date then delete;
-run;       /* 89057 obs */
+run;       /* 123,111 obs */
 
 /************************************************************************************
 	 min.bs_user_all_v08, N = 43,443
