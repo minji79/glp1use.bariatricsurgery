@@ -13,17 +13,17 @@
 ************************************************************************************/
 
 /**************************************************
-* new dataset: min.glp1_users_6335
+* new dataset: min.glp1_users_15769
 * original dataset: min.bs_glp1_user_v03 (N = 37643)
 * description: 
 **************************************************/
 
-data min.glp1_users_13268;
+data min.glp1_users_15769;
   set min.bs_glp1_user_v03;
   if temporality = 2;
-run; /* 13268 obs */
+run; /* 15769 obs */
 
-proc means data=min.glp1_users_13268
+proc means data=min.glp1_users_15769
   n nmiss mean std min max median p25 p75;
   var gap_glp1_bs;
   title "distribution of time to post-surgery GLP-1 use";
@@ -43,25 +43,25 @@ run;
 **************************/
 
 /**************************************************
-* new dataset: min.glp1_users_6335_v01
+* new dataset: min.glp1_users_15769_v01
 * original dataset: min.glp1_users_6335
 * description: add 'total' colunm by time_to_ini_cat
 **************************************************/
 
 * add calender year;
-data min.glp1_users_13268_v01;
-	set min.glp1_users_13268;
+data min.glp1_users_15769_v01;
+	set min.glp1_users_15769;
  	format glp1_init_year 4.;
 	glp1_init_year = year(glp1_initiation_date);
 run;
-proc print data=min.glp1_users_13268_v01 (obs=30);
+proc print data=min.glp1_users_15769_v01 (obs=30);
 	var patient_id glp1_initiation_date glp1_init_year ;
 	where glp1_user =1;
 run;
 
 /* plotting purpose */
-proc freq data=min.glp1_users_13268_v01 noprint;
-    tables Molecule*glp1_init_year / out=min.glp1_users_13268_v01_pct;
+proc freq data=min.glp1_users_15769_v01 noprint;
+    tables Molecule*glp1_init_year / out=min.glp1_users_15769_v01_pct;
 run;
 
 proc sql;
@@ -71,7 +71,7 @@ proc sql;
            count, 
            percent, 
            100 * count / sum(count) as col_pct  
-    from min.glp1_users_13268_v01_pct
+    from min.glp1_users_15769_v01_pct
     group by glp1_init_year;
 quit;
 proc print data=min.glp1_user_linegraph (obs=30);
@@ -134,8 +134,8 @@ run;
 	STEP 3. Make time-to-initiation variable 
 ************************************************************************************/
 
-data min.glp1_users_13268_v02;
-    set min.glp1_users_13268_v01;
+data min.glp1_users_15769_v02;
+    set min.glp1_users_15769_v01;
     format time_to_glp1_cat 8.;
     
     /* Calculate the time difference in days */
@@ -149,7 +149,8 @@ data min.glp1_users_13268_v02;
     else if 1460 <= time_diff < 1825 then time_to_glp1_cat = 5; /* started between 4-5 years */
     else if 1825 <= time_diff < 2190 then time_to_glp1_cat = 6; /* started between 5-6 years */
     else if 2190 <= time_diff < 2555 then time_to_glp1_cat = 7; /* started between 6-7 years */
-    else if time_diff >= 2555 then time_to_glp1_cat = 8;       /* started after 7 years */
+    else if 2555 <= time_diff < 2920 then time_to_glp1_cat = 8; /* started between 7-8 years */
+    else if time_diff >= 2920 then time_to_glp1_cat = 9;       /* started after 8 years */
 
     drop time_diff;
 run;
