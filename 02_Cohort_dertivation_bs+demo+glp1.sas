@@ -177,7 +177,7 @@ proc SQL;
  	select distinct a.*, b.*
 	from min.bs_user_all_v08 as a left join min.glp1_user_all_date_v01 as b 
 	on a.patient_id=b.patient_id;
-quit;       /* 438,089 obs */
+quit;       /* 539,004 obs */
 
 * 2.2. fill '0' in glp1_user cells with null values for further analysis;
 data min.bs_glp1_user_v00; set min.bs_glp1_user_v00; if missing(glp1_user) then glp1_user = '0'; run;
@@ -186,13 +186,13 @@ data min.bs_glp1_user_v00; set min.bs_glp1_user_v00; if missing(glp1_user) then 
 proc sql;
 	select count(distinct patient_id) as distinct_patient_count
  	from min.bs_glp1_user_v00;
-quit;        /* 89057 individuals */  
+quit;        /* 123,111 individuals */  
 
 proc sql;
     select count(distinct patient_id) as distinct_patient_count
     from min.bs_glp1_user_v00
     where glp1_user = 1;
-quit;       /* 20113 individuals (22.58 %) */
+quit;       /* 25985 individuals (21.11 %) */
 
 
 
@@ -212,7 +212,7 @@ quit;       /* 20113 individuals (22.58 %) */
 data min.bs_glp1_user_v01;
 	set min.bs_glp1_user_v00;
 	gap_glp1_bs = glp1_initiation_date - bs_date;
-run;      /* 225,095 obs */
+run;      /* 539004 obs */
 
 proc print data=min.bs_glp1_user_v01 (obs = 30);
 	var patient_id glp1_user bs_date glp1_initiation_date glp1_date gap_glp1_bs;
@@ -231,7 +231,7 @@ run;
 * 3.2. Remove duplications (only remain 'the last glp1_date' & removing other glp1_date information;
 
 /************************************************************************************
-	STEP 4. Make distinct paitent_id                  (N = 43443)
+	STEP 4. Make distinct paitent_id                  (N = 123111)
 ************************************************************************************/
 
 proc sort data = min.bs_glp1_user_v01; by patient_id glp1_date; run;
@@ -240,17 +240,17 @@ data min.bs_glp1_user_v02;
     set min.bs_glp1_user_v01;
     by patient_id; 
     if first.patient_id; 
-run;     /* 89057 obs */
+run;     /* 123111 obs */
 
 
 /************************************************************************************
-	STEP 5. Remove People with death_date < GLP1_initiation_date            (N = 52)
+	STEP 5. Remove People with death_date < GLP1_initiation_date            (N = 18)
 ************************************************************************************/
 
 data min.bs_glp1_user_v03;
     set min.bs_glp1_user_v02;
     if not missing(death_date) and death_date < glp1_initiation_date then delete;
-run;   /* 89043 */
+run;   /* 123,093 */
 
 
 /************************************************************************************
@@ -264,9 +264,9 @@ run;
               Variable Definition
 * table: min.bs_glp1_user_v02
 * temporality
-*       0  : no glp1_user   (n = 68944)
-*       1  : take glp1 before BS   (n = 6831)
-*       2  : take glp1 after BS    (n = 13268)
+*       0  : no glp1_user   (n = 97126)
+*       1  : take glp1 before BS   (n = 10198)
+*       2  : take glp1 after BS    (n = 15769)
 **************************************************/
 
 data min.bs_glp1_user_v03;
