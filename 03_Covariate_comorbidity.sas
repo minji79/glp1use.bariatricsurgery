@@ -51,7 +51,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a 
     left join tx.diagnosis as b
     on a.patient_id = b.patient_id;
-quit;
+quit;   /* 51,340,409 obs */
 
 * 1.3. list up comorbidities;
 /**************************************************
@@ -162,7 +162,7 @@ data min.bs_user_comorbidity_v01;
         cc_gerd = 1;
         
     end;
-run;  /* 34993491 obs */
+run;  /* 51,340,409 obs */
 
 
 * 1.4. add patient's bs_date and temporality;
@@ -179,7 +179,7 @@ proc sql;
     from min.bs_user_comorbidity_v01 as a 
     left join min.bs_glp1_user_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 34993491 obs */
+quit;   /* 51,340,409 obs */
 
 
 /************************************************************************************
@@ -207,7 +207,7 @@ data min.bs_user_comorbidity_v03;
    if bs_date - como_date ge 0 and bs_date - como_date le 365;
 run;      
 
-proc sort data=min.bs_user_comorbidity_v03; by patient_id; run;
+proc sort data=min.bs_user_comorbidity_v03; by patient_id; run;  /* 11489400 obs */ 
 
 
 /************************************************************************************
