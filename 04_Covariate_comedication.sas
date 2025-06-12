@@ -35,7 +35,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a 
     left join min.metformin_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 330999 obs */
+quit;       /* 351216 obs */
 
 /* Remain co-medication within 1 yr before the surgery */
 /**************************************************
@@ -57,7 +57,7 @@ data min.metformin_users_v02;
    if bs_date - comedi_date ge 0 and bs_date - comedi_date le 365;
    if not missing(comedi_date) then cm_metformin = 1;
    drop unique_id;
-run;       /* 44628 obs */
+run;       /* 63651 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -74,7 +74,7 @@ data min.metformin_users_v03;
 	set min.metformin_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 8007 obs */
+run;      /* 11952 obs */
 
 data min.metformin_users_v03;
 	set min.metformin_users_v03;
@@ -100,7 +100,7 @@ quit;
 data min.bs_user_comedication_v00;
 	set min.bs_user_comedication_v00;
  	if missing(cm_metformin) then cm_metformin = 0;
-run;
+run;  /* study population = 112,895 obs */
 
 
 * 1.2. dpp4 users;
@@ -124,7 +124,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a 
     left join min.dpp4_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 155835 obs */
+quit;       /* 171783 obs */
 
 data min.dpp4_users_v01;
 	set min.dpp4_users_v01;
@@ -146,7 +146,7 @@ data min.dpp4_users_v02;
    if bs_date - cm_dpp4_date ge 0 and bs_date - cm_dpp4_date le 365;
    if not missing(cm_dpp4_date) then cm_dpp4 = 1;
    drop unique_id;
-run;       /* 11599 obs */
+run;       /* 14244 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -163,7 +163,7 @@ data min.dpp4_users_v03;
 	set min.dpp4_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 1095 obs */
+run;      /* 1409 obs */
 
 /* merge with the total dataset */
 /**************************************************
@@ -179,7 +179,7 @@ proc sql;
     from min.bs_user_comedication_v00 as a 
     left join min.dpp4_users_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 37643 obs */
+quit;   /* 112,895 obs */
 
 data min.bs_user_comedication_v01;
 	set min.bs_user_comedication_v01;
@@ -206,7 +206,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.sglt2_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 152158 obs */
+quit;       /* 153209 obs */
 
 data min.sglt2_users_v01;
 	set min.sglt2_users_v01;
@@ -228,7 +228,7 @@ data min.sglt2_users_v02;
    if bs_date - cm_sglt2_date ge 0 and bs_date - cm_sglt2_date le 365;
    if not missing(cm_sglt2_date) then cm_sglt2 = 1;
    drop unique_id;
-run;       /* 6195 obs */
+run;       /* 8184 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -245,7 +245,7 @@ data min.sglt2_users_v03;
 	set min.sglt2_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 829 obs */
+run;      /* 1129 obs */
 
 /* merge with the total dataset */
 /**************************************************
@@ -289,7 +289,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.sulfonylureas_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 143974 obs */
+quit;       /* 157958 obs */
 
 data min.sulfonylureas_users_v01;
 	set min.sulfonylureas_users_v01;
@@ -311,7 +311,7 @@ data min.sulfonylureas_users_v02;
    if bs_date - cm_su_date ge 0 and bs_date - cm_su_date le 365;
    if not missing(cm_su_date) then cm_su = 1;
    drop unique_id;
-run;       /* 9254 obs */
+run;       /* 12004 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -328,7 +328,7 @@ data min.sulfonylureas_users_v03;
 	set min.sulfonylureas_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 1623 obs */
+run;      /* 2305 obs */
 
 /* merge with the total dataset */
 /**************************************************
@@ -351,7 +351,6 @@ data min.bs_user_comedication_v03;
  	if missing(cm_su) then cm_su = 0;
 run;
 
-/******************************************************************************************************************************************/
 
 * 1.5. thiazo users;
 /**************************************************
@@ -373,7 +372,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.thiazo_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 43710 obs */
+quit;       /* 120974 obs */
 
 data min.thiazo_users_v01;
 	set min.thiazo_users_v01;
@@ -395,7 +394,7 @@ data min.thiazo_users_v02;
    if bs_date - cm_thiaz_date ge 0 and bs_date - cm_thiaz_date le 365;
    if not missing(cm_thiaz_date) then cm_thiaz = 1;
    drop unique_id;
-run;       /* obs */
+run;       /* 2209 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -412,7 +411,7 @@ data min.thiazo_users_v03;
 	set min.thiazo_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 338 obs */
+run;      /* 478 obs */
 
 /* merge with the total 38384 dataset */
 /**************************************************
@@ -436,8 +435,6 @@ data min.bs_user_comedication_v04;
 run;
 
 
-
-
 * 1.6. insulin users;
 /**************************************************
 * new table: min.insulin_users_v00
@@ -458,7 +455,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.insulin_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 498603 obs */
+quit;       /* 693113 obs */
 
 data min.insulin_users_v01;
 	set min.insulin_users_v01;
@@ -480,7 +477,7 @@ data min.insulin_users_v02;
    if bs_date - cm_insul_date ge 0 and bs_date - cm_insul_date le 365;
    if not missing(cm_insul_date) then cm_insul = 1;
    drop unique_id;
-run;       /* obs */
+run;       /* 127,892 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -497,7 +494,7 @@ data min.insulin_users_v03;
 	set min.insulin_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 7761 obs */
+run;      /* 9,824 obs */
 
 /* merge with the total 38384 dataset */
 /**************************************************
@@ -513,7 +510,7 @@ proc sql;
     from min.bs_user_comedication_v04 as a 
     left join min.insulin_users_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 38384 obs */
+quit; 
 
 data min.bs_user_comedication_v05;
 	set min.bs_user_comedication_v05;
@@ -541,7 +538,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.antidepressant_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 727286 obs */
+quit;       /* 1589416 obs */
 
 data min.antidepressant_users_v01;
 	set min.antidepressant_users_v01;
@@ -563,7 +560,7 @@ data min.antidepressant_users_v02;
    if bs_date - cm_depres_date ge 0 and bs_date - cm_depres_date le 365;
    if not missing(cm_depres_date) then cm_depres = 1;
    drop unique_id;
-run;       /*  obs */
+run;       /* 215,622 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -580,7 +577,7 @@ data min.antidepressant_users_v03;
 	set min.antidepressant_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 10424 obs */
+run;      /* 26563 obs */
 
 /* merge with the total dataset */
 /**************************************************
@@ -596,7 +593,7 @@ proc sql;
     from min.bs_user_comedication_v05 as a 
     left join min.antidepressant_users_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 38384 obs */
+quit;   
 
 data min.bs_user_comedication_v06;
 	set min.bs_user_comedication_v06;
@@ -624,7 +621,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.antipsychotics_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 228793 obs */
+quit;       /* 478,910 obs */
 
 data min.antipsychotics_users_v01;
 	set min.antipsychotics_users_v01;
@@ -646,7 +643,7 @@ data min.antipsychotics_users_v02;
    if bs_date - cm_psycho_date ge 0 and bs_date - cm_psycho_date le 365;
    if not missing(cm_psycho_date) then cm_psycho = 1;
    drop unique_id;
-run;       /* obs */
+run;       /* 89834 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -663,7 +660,7 @@ data min.antipsychotics_users_v03;
 	set min.antipsychotics_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 8758 obs */
+run;      /* 23849 obs */
 
 /* merge with the total 38384 dataset */
 /**************************************************
@@ -679,7 +676,7 @@ proc sql;
     from min.bs_user_comedication_v06 as a 
     left join min.antipsychotics_users_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 38384 obs */
+quit;   
 
 data min.bs_user_comedication_v07;
 	set min.bs_user_comedication_v07;
@@ -706,7 +703,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.anticonvulsants_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 640650 obs */
+quit;       /* 1,485,146 obs */
 
 data min.anticonvulsants_users_v01;
 	set min.anticonvulsants_users_v01;
@@ -728,7 +725,7 @@ data min.anticonvulsants_users_v02;
    if bs_date - cm_convul_date ge 0 and bs_date - cm_convul_date le 365;
    if not missing(cm_convul_date) then cm_convul = 1;
    drop unique_id;
-run;       /* obs */
+run;       /* 258,623 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -745,7 +742,7 @@ data min.anticonvulsants_users_v03;
 	set min.anticonvulsants_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 14168 obs */
+run;      /* 41,893 obs */
 
 /* merge with the total dataset */
 /**************************************************
@@ -761,7 +758,7 @@ proc sql;
     from min.bs_user_comedication_v07 as a 
     left join min.anticonvulsants_users_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 38384 obs */
+quit;  
 
 data min.bs_user_comedication_v08;
 	set min.bs_user_comedication_v08;
@@ -799,7 +796,7 @@ proc sql;
     from min.bs_glp1_user_v03 as a
     left join min.anti_ob_users_v00 as b
     on a.patient_id = b.patient_id;
-quit;       /* 113301 obs */
+quit;       /* 325673 obs */
 
 data min.anti_ob_users_v01;
 	set min.anti_ob_users_v01;
@@ -821,7 +818,7 @@ data min.anti_ob_users_v02;
    if bs_date - cm_ob_date ge 0 and bs_date - cm_ob_date le 365;
    if not missing(cm_ob_date) then cm_ob = 1;
    drop unique_id;
-run;       
+run;       /* 39845 obs */
 
 /* Remain unique patients */
 /**************************************************
@@ -838,7 +835,7 @@ data min.anti_ob_users_v03;
 	set min.anti_ob_users_v02;
  	by patient_id;
   	if first.patient_id;
-run;      /* 2115 obs */
+run;      /* 5976 obs */
 
 /* merge with the total 38384 dataset */
 /**************************************************
@@ -854,7 +851,7 @@ proc sql;
     from min.bs_user_comedication_v08 as a 
     left join min.anti_ob_users_v03 as b
     on a.patient_id = b.patient_id;
-quit;   /* 38384 obs */
+quit;  
 
 data min.bs_user_comedication_v09;
 	set min.bs_user_comedication_v09;
