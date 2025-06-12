@@ -93,7 +93,7 @@ proc SQL;
  	select a.*, b.date, b.value
   	from min.bs_glp1_user_v03 as a left join min.bmi_date as b
    	on a.patient_id = b.patient_id;
-quit;                         /* 2,043,588 incl. duplicated */
+quit;                         /* 3,216,659 incl. duplicated */
     
 data min.bs_glp1_bmi_v00;
     set min.bs_glp1_bmi_v00;
@@ -103,7 +103,7 @@ run;
 proc sql;
 	select count(distinct patient_id) as distinct_patient_count
  	from min.bs_glp1_bmi_v00;
-quit;           /* it should be the same as "82212 - BS users" - yes, it is! */
+quit;           /* it should be the same as "112895 - BS users" - yes, it is! */
 
 * 1.5. remove missing BMI or BMI_date;
 /* we don't exclude the extreme BMI value */
@@ -116,7 +116,7 @@ run;
 data min.bs_glp1_bmi_v01;
 	set min.bs_glp1_bmi_v01;
  	if missing(bmi) then delete;
-run;    /* 1756746 obs */
+run;    /* 2770595 obs */
 
 * 1.6. avg BMI if multiple BMI within a day;
 data min.bs_glp1_bmi_v01; 
@@ -134,7 +134,8 @@ Create table min.bs_glp1_bmi_v02 as
 Select distinct patient_id, bmi_date, avg(bmi) as bmi
 From min.bs_glp1_bmi_v01
 Group by patient_id, bmi_date;
-Quit;      /* 1567838 obs */
+Quit;      /* 2432857 obs */
+
 
 /************************************************************************************
 	STEP 2. BMI at baseline | bmi_index | the clostest value prior to the first bs_date
@@ -215,33 +216,33 @@ bmi_3y_af | BMI 3 years after the BS date
 Proc sql;
 Create table min.bs_glp1_bmi_glp1_prior AS
 Select distinct a.patient_id, a.glp1_initiation_date, b.bmi_date, b.bmi
-From min.glp1_users_13268 a inner join min.bs_glp1_bmi_v02 b on (a.patient_id =b.patient_id and b.bmi_date < a.glp1_initiation_date);
+From min.glp1_users_15769_v02 a inner join min.bs_glp1_bmi_v02 b on (a.patient_id =b.patient_id and b.bmi_date < a.glp1_initiation_date);
 Quit;
 
 * for GLP1 users | min.bmi_glp1_users ;
 proc sql;
 create table min.bmi_glp1_users as
 select distinct a.patient_id, a.temporality, a.bs_date, a.glp1_initiation_date, b.bmi_date, b.bmi
-from min.glp1_users_13268 a inner join min.bs_glp1_bmi_glp1_prior b on (a.patient_id = b.patient_id and b.bmi_date < a.glp1_initiation_date);
-quit;   /* 333142 obs */
+from min.glp1_users_15769_v02 a inner join min.bs_glp1_bmi_glp1_prior b on (a.patient_id = b.patient_id and b.bmi_date < a.glp1_initiation_date);
+quit;   /* 463545 obs */
 
-proc print data=min.bmi_glp1_users (obs = 30);
-run;
 
 * for non-users | min.bmi_non_users;
 proc sql;
 create table min.bmi_non_users as
 select distinct a.patient_id, a.temporality, a.bs_date, b.bmi_date, b.bmi
 from min.bs_glp1_user_v03 a inner join min.bs_glp1_bmi_v02 b on (a.patient_id = b.patient_id and a.temporality =0);
-quit;     /* 1139110 obs */
+quit;     /* 1848592 obs */
 
-proc print data=min.bmi_non_users (obs = 30);
-run;
+proc print data=min.bmi_non_users (obs = 30); run;
 
 * for total study population | min.bmi_glp1_users + min.bmi_non_users;
 data min.bmi_studypopulation;
   set min.bmi_glp1_users min.bmi_non_users;
-run;  /* 1472252 obs */
+run;  /* 2312137 obs */
+
+
+/************************************************************************************************************************************************************************************/
 
 
 * 4.1. bmi_1y_bf | BMI 1 year before the BS date;
