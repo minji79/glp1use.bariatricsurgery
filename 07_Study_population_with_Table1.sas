@@ -61,7 +61,7 @@ proc sql;
            b.cm_ob
     from min.bs_glp1_user_v03 a 
     left join min.bs_user_comedication_v09 b on a.patient_id = b.patient_id;
-quit;
+quit;              /* 112895 obs */
 
 * dataset for bmi_index measured at baseline;
 proc sql;
@@ -364,7 +364,8 @@ data min.studypopulation_v02;
     else if 1460 <= time_diff < 1825 then time_to_glp1_cat = 5;       /* started between 4-5 years */
     else if 1825 <= time_diff < 2190 then time_to_glp1_cat = 6;       /* started between 5-6 years */
     else if 2190 <= time_diff < 2555 then time_to_glp1_cat = 7;       /* started between 6-7 years */
-    else if time_diff >= 2555 then time_to_glp1_cat = 8;              /* started after 7 years */
+    else if 2555 <= time_diff < 2920 then time_to_glp1_cat = 8;       /* started between 7-8 years */
+    else if time_diff >= 2920 then time_to_glp1_cat = 9;              /* started after 8 years */
 
     drop time_diff;
 run;
