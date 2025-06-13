@@ -15,7 +15,9 @@ proc sql;
  	select distinct a.*, b.time_to_glp1_cat
   	from min.bmi_studypopulation a left join min.studypopulation_v02 b 
    	on a.patient_id = b.patient_id;
-quit;
+quit;   /* 2312137 obs */
+
+proc contents data=min.bmi_studypopulation; run;
 
 /************************************************************************************
 	STEP 1. using monthly BMI mean
